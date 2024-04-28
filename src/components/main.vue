@@ -1,140 +1,88 @@
-
-
 <template>
-  <div>
-    <el-row>
-      <el-col :span="12">
-        <el-card>
-<!--          <canvas ref="canvasRef" ></canvas>-->
-<!--          <VuePDF-->
-<!--              :style="{width: '100%', height: '100%',  top: 0, left: 0}"-->
-<!--              :scale="scale"-->
-<!--              :pdf="pdf"-->
-<!--              text-layer-->
-<!--              :highlight-text="highlightText"-->
-<!--              :highlight-options="highlightOptions" />-->
-          <canvas id="the-canvas" style="border: 1px solid black; direction: ltr;"></canvas>
-<!--          https://github.com/rossta/vue-pdfjs-demo/blob/master/src/components/PDFPage.vue-->
-<!--          https://github.com/mozilla/pdf.js/blob/master/examples/learning/helloworld.html-->
-          <VuePdf v-for="page in numOfPages" :key="page" :src="pdfSrc" :page="page" />
-        </el-card>
-<!--        <el-card style="position: relative;">-->
-<!--          <canvas ref="canvasRef" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></canvas>-->
-<!--              <VuePDF-->
-<!--                  :style="{width: '100%', height: '100%'}"-->
-<!--                  :scale="scale"-->
-<!--                  :pdf="pdf"-->
-<!--                  text-layer-->
-<!--                  :highlight-text="highlightText"-->
-<!--                  :highlight-options="highlightOptions" />-->
-<!--</el-card>-->
-      </el-col>
-      <el-col :span="12">
-        <el-card style="width: 100%">
-          <div>
-            <el-input v-model="highlightText" placeholder="请输入关键字"></el-input>
-            <el-button @click="btnClick"> test</el-button>
-<!--            <VueMarkdownEditor v-model="dict" height="400px"></VueMarkdownEditor>-->
-            <v-md-preview :text="dict['analyzeResult']['content']"></v-md-preview>
-
-          </div>
-
-        </el-card>
-<!--        <VueMarkdownEditor v-model="dict" height="400px"></VueMarkdownEditor>-->
-      </el-col>
-    </el-row>
-
+  <div class="pdf-container">
+    <canvas  v-for="pdfIndex in pdfPages" :id="`pdf-canvas-${pdfIndex}`" :key="pdfIndex" />
   </div>
 </template>
-
-<script setup>
-
-import { VuePDF, usePDF } from '@tato30/vue-pdf'
-import '@tato30/vue-pdf/style.css'
-import { ref ,onMounted} from 'vue'
-import MyDict from "./mydict.js";
-import { fabric } from 'fabric'
-
-import { VuePdf, createLoadingTask } from 'vue3-pdfjs/esm';
-
-const pdfSrc = ref('https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf');
-const numOfPages = ref(0);
+<script setup lang="ts">
+import * as PDFJS from '/public/pdf.mjs'
+import * as PdfWorker from '/public/pdf.worker.mjs'
+import { nextTick, ref, Ref, watch } from 'vue'
+import { isEmpty, debounce } from 'lodash-es'
 
 
-
-// 1. 创建`Canvas`元素
-const canvasRef = ref(null)
-// const dragX = ref(300)
-// const dragY = ref(0)
-
-
-const str = ref("# sss")
-
-// const { pdf } = usePDF('https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf')
-const {pdf} = usePDF('https://pdfdemo1.happygogo.site/layout-pageobject.pdf')
-const scale = ref(0.5)
-const highlightText = ref('This Is title')
-const highlightOptions = ref({
-  completeWords: false,
-  ignoreCase: true,
-})
-const dict=ref({})
-
-const btnClick = ()=>{
-  highlightText.value= dict.value['analyzeResult']['content'].substring(91, 91+95).replace('\n',' ')
-}
-const InitDict = () => {
-  dict.value=MyDict
-}
-
-InitDict()
-
-onMounted(async() => {
-  const loadingTask = createLoadingTask(pdfSrc.value);
-  loadingTask.promise.then((pdf) => {
-    numOfPages.value = pdf.numPages;
-  });
-  return
-  const canvas = new fabric.Canvas(canvasRef.value)
-  // canvas.setWidth(500)
-  // canvas.setHeight(200)
-  canvas.setBackgroundColor('red');
-
-// 将你的 "polygon" 数组转化为点的数组
-  const polygonPoints = [];
-  const boundingRegion = [
-    0.9837,
-    3.1176,
-    4.0065,
-    3.1176,
-    4.0065,
-    3.7574,
-    0.9837,
-    3.7574
-  ];
-
-  // 计算矩形的宽度和高度
-  const width = (boundingRegion[4] - boundingRegion[0]) * 72;
-  const height = (boundingRegion[5] - boundingRegion[1]) * 72;
-
-// 创建矩形并添加到画布
-  const rect = new fabric.Rect({
-    left: boundingRegion[0] ,
-    top: boundingRegion[1] ,
-    fill: 'blue',
-    width: width,
-    height: height,
-  });
-
-  canvas.add(rect);
-  canvas.renderAll();
+const props: any = defineProps({
+  pdf: {
+    required: true
+  }
 })
 
-function onHighlight(value) {
-  console.log(value)
+let pdfDoc: any = null
+const pdfPages: Ref = ref(0)
+const pdfScale: Ref = ref(1.3)
+const loadFile = async (url: any) => {
+  // 设定pdfjs的 workerSrc 参数
+  PDFJS.GlobalWorkerOptions.workerSrc = "https://unpkg.com/pdfjs-dist@4.1.392/build/pdf.worker.min.mjs"
+  const loadingTask = PDFJS.getDocument(url)
+  loadingTask.promise.then(async (pdf: any) => {
+    pdfDoc = pdf // 保存加载的pdf文件流
+    pdfPages.value = pdfDoc.numPages // 获取pdf文件的总页数
+    await nextTick(() => {
+      renderPage(1) // 将pdf文件内容渲染到canvas
+    })
+  }).catch((error: any) => {
+    //可以用自己组件库弹出提示框
+    console.log(error)
+  })
 }
+
+const renderPage = (num: any) => {
+  pdfDoc.getPage(num).then((page: any) => {
+    page.cleanup()
+    const canvas: any = document.getElementById(`pdf-canvas-${num}`)
+    if (canvas) {
+      const ctx = canvas.getContext('2d')
+      const dpr = window.devicePixelRatio || 1
+      const bsr = ctx.webkitBackingStorePixelRatio ||
+          ctx.mozBackingStorePixelRatio ||
+          ctx.msBackingStorePixelRatio ||
+          ctx.oBackingStorePixelRatio ||
+          ctx.backingStorePixelRatio ||
+          1
+      const ratio = dpr / bsr
+      const viewport = page.getViewport({ scale: pdfScale.value })
+      canvas.width = viewport.width * ratio
+      canvas.height = viewport.height * ratio
+      canvas.style.width = viewport.width + 'px'
+      canvas.style.height = viewport.height + 'px'
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0)
+      const renderContext = {
+        canvasContext: ctx,
+        viewport: viewport
+      }
+      page.render(renderContext)
+      if (num < pdfPages.value) {
+        renderPage(num + 1)
+      }
+    }
+  })
+}
+
+const debouncedLoadFile = debounce((pdf: any) => loadFile(pdf), 1000)
+watch(() => props.pdf, (newValue: any) => {
+  !isEmpty(newValue) && debouncedLoadFile(newValue)
+}, {
+  immediate: true
+})
 </script>
+<style scoped lang="less">
+.pdf-container {
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* 启用滚动条 */
+}
 
-<style scoped>
-
+canvas {
+  width: 100%;
+  max-height: 100vh; /* 设置最大高度为视口高度 */
+}
 </style>

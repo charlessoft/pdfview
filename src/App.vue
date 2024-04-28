@@ -1,6 +1,9 @@
 <script setup>
 import HelloWorld from './components/HelloWorld.vue'
 import Main from './components/main.vue'
+import {ref} from "vue";
+
+const jsPdf = ref("https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf")
 </script>
 
 <template>
@@ -13,7 +16,10 @@ import Main from './components/main.vue'
 <!--    </a>-->
 <!--  </div>-->
 <!--  <HelloWorld msg="Vite + Vue" />-->
-  <Main></Main>
+
+  <div class="leftMain">
+    <Main :pdf="jsPdf" style="width: 100%;height:100%;"></Main>
+  </div>
 </template>
 
 <style scoped>

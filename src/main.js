@@ -21,11 +21,11 @@ import 'prismjs/components/prism-json';
 VMdPreview.use(vuepressTheme, {
     Prism,
 });
-
-import VuePdf from 'vue3-pdfjs'
+//
+// import VuePdf from 'vue3-pdfjs'
 
 
 createApp(App).use(ElementPlus).
 use(VMdPreview).
-use(VuePdf).
+// use(VuePdf).
 mount('#app')
