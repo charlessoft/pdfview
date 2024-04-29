@@ -1,78 +1,46 @@
 <template>
-  <div class="pdf-container">
-    <canvas  v-for="pdfIndex in pdfPages" :id="`pdf-canvas-${pdfIndex}`" :key="pdfIndex" />
+  <div>
+
+    <el-row>
+      <el-col :span="12">
+        <el-upload
+            class="excel-btn"
+            :action="`${path}/v1/uploadFile`"
+            :on-success="loadExcel"
+            :show-file-list="false"
+        >
+          <el-button size="small" type="primary" icon="upload">导入</el-button>
+        </el-upload>
+      </el-col>
+      <el-col :span="12">
+        <el-card style="width: 100%">
+          <div>
+<!--            <el-input v-model="highlightText" placeholder="请输入关键字"></el-input>-->
+<!--            <el-button @click="btnClick"> test</el-button>-->
+            <!--            <VueMarkdownEditor v-model="dict" height="400px"></VueMarkdownEditor>-->
+            <v-md-preview :text="dict['analyzeResult']['content']"></v-md-preview>
+
+          </div>
+
+        </el-card>
+        <!--        <VueMarkdownEditor v-model="dict" height="400px"></VueMarkdownEditor>-->
+      </el-col>
+    </el-row>
+
   </div>
 </template>
-<script setup lang="ts">
-import * as PDFJS from '/public/pdf.mjs'
-import * as PdfWorker from '/public/pdf.worker.mjs'
-import { nextTick, ref, Ref, watch } from 'vue'
-import { isEmpty, debounce } from 'lodash-es'
+<script setup >
+import {ref} from "vue";
+const path = ref(import.meta.env.VITE_BASE_API)
 
-
-const props: any = defineProps({
-  pdf: {
-    required: true
-  }
+const dict = ref({
+  'analyzeResult':{'content':'# sss'}
 })
 
-let pdfDoc: any = null
-const pdfPages: Ref = ref(0)
-const pdfScale: Ref = ref(1.3)
-const loadFile = async (url: any) => {
-  // 设定pdfjs的 workerSrc 参数
-  PDFJS.GlobalWorkerOptions.workerSrc = "https://unpkg.com/pdfjs-dist@4.1.392/build/pdf.worker.min.mjs"
-  const loadingTask = PDFJS.getDocument(url)
-  loadingTask.promise.then(async (pdf: any) => {
-    pdfDoc = pdf // 保存加载的pdf文件流
-    pdfPages.value = pdfDoc.numPages // 获取pdf文件的总页数
-    await nextTick(() => {
-      renderPage(1) // 将pdf文件内容渲染到canvas
-    })
-  }).catch((error: any) => {
-    //可以用自己组件库弹出提示框
-    console.log(error)
-  })
-}
 
-const renderPage = (num: any) => {
-  pdfDoc.getPage(num).then((page: any) => {
-    page.cleanup()
-    const canvas: any = document.getElementById(`pdf-canvas-${num}`)
-    if (canvas) {
-      const ctx = canvas.getContext('2d')
-      const dpr = window.devicePixelRatio || 1
-      const bsr = ctx.webkitBackingStorePixelRatio ||
-          ctx.mozBackingStorePixelRatio ||
-          ctx.msBackingStorePixelRatio ||
-          ctx.oBackingStorePixelRatio ||
-          ctx.backingStorePixelRatio ||
-          1
-      const ratio = dpr / bsr
-      const viewport = page.getViewport({ scale: pdfScale.value })
-      canvas.width = viewport.width * ratio
-      canvas.height = viewport.height * ratio
-      canvas.style.width = viewport.width + 'px'
-      canvas.style.height = viewport.height + 'px'
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0)
-      const renderContext = {
-        canvasContext: ctx,
-        viewport: viewport
-      }
-      page.render(renderContext)
-      if (num < pdfPages.value) {
-        renderPage(num + 1)
-      }
-    }
-  })
+const loadExcel = () => {
+  // getTableData(loadExcelData)
 }
-
-const debouncedLoadFile = debounce((pdf: any) => loadFile(pdf), 1000)
-watch(() => props.pdf, (newValue: any) => {
-  !isEmpty(newValue) && debouncedLoadFile(newValue)
-}, {
-  immediate: true
-})
 </script>
 <style scoped lang="less">
 .pdf-container {
