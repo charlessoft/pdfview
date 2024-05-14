@@ -3,7 +3,8 @@ import HelloWorld from './components/HelloWorld.vue'
 import Main from './components/main.vue'
 import {ref} from "vue";
 
-const jsPdf = ref("https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf")
+// const jsPdf = ref("https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf")
+const jsPdf = ref("https://pdfdemo1.happygogo.site/k.pdf")
 </script>
 
 <template>
@@ -17,8 +18,8 @@ const jsPdf = ref("https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web
 <!--  </div>-->
 <!--  <HelloWorld msg="Vite + Vue" />-->
 
-  <div class="leftMain">
-    <Main :pdf="jsPdf" style="width: 100%;height:100%;"></Main>
+  <div >
+    <Main :pdf="jsPdf" style="margin-top:0px;width: 100%;height:100%;"></Main>
   </div>
 </template>
 
