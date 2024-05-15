@@ -4,22 +4,34 @@ import Main from './components/main.vue'
 import {ref} from "vue";
 
 // const jsPdf = ref("https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf")
-const jsPdf = ref("https://pdfdemo1.happygogo.site/k.pdf")
+const jsPdf = ref('https://pdfdemo1.happygogo.site/k.pdf')
+
+const loading=ref(false)
+const btnJsLoad = ()=>{
+  if(jsPdf.value !== ""){
+    loading.value = true
+  }
+
+}
 </script>
 
 <template>
-<!--  <div>-->
-<!--    <a href="https://vitejs.dev" target="_blank">-->
-<!--      <img src="/vite.svg" class="logo" alt="Vite logo" />-->
-<!--    </a>-->
-<!--    <a href="https://vuejs.org/" target="_blank">-->
-<!--      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />-->
-<!--    </a>-->
-<!--  </div>-->
-<!--  <HelloWorld msg="Vite + Vue" />-->
+  <el-row>
+    <el-col :span="12">
 
+      <!--        <el-input v-model="pdf_url" style="width: 80%"></el-input>-->
+      <!--        <el-button> 段落总结</el-button>-->
+      <el-form>
+        <el-form-item label="输入pdf地址:">
+          <el-input v-model="jsPdf" style="width: 80%" ></el-input>
+          <el-button @click="btnJsLoad" type="primary" >加载pdf</el-button>
+        </el-form-item>
+
+      </el-form>
+    </el-col>
+  </el-row>
   <div >
-    <Main :pdf="jsPdf" style="margin-top:0px;width: 100%;height:100%;"></Main>
+    <Main v-if="loading==true" :pdf="jsPdf" style="margin-top:0px;width: 100%;height:100%;"></Main>
   </div>
 </template>
 
