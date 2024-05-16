@@ -13,6 +13,9 @@ import '@kangc/v-md-editor/lib/style/preview.css';
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
 import '@kangc/v-md-editor/lib/theme/style/vuepress.css';
 
+// 引入封装的router
+import router from '@/router/index'
+
 // Prism
 import Prism from 'prismjs';
 // 代码高亮
@@ -25,7 +28,7 @@ VMdPreview.use(vuepressTheme, {
 // import VuePdf from 'vue3-pdfjs'
 
 
-createApp(App).use(ElementPlus).
+createApp(App).use(ElementPlus).use(router).
 use(VMdPreview).
 // use(VuePdf).
 mount('#app')

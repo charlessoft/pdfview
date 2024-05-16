@@ -16,3 +16,12 @@ export const summaryParagraph = (data)=>{
         data
     })
 }
+
+export const upload_file = (data)=>{
+    return service({
+        url: '/upload_file',
+        method: 'post',
+        data
+    })
+}
+
