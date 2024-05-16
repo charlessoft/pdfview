@@ -8,7 +8,7 @@
         <el-form>
           <el-form-item label="输入pdf地址:">
             <el-input v-model="jsPdf" style="width: 80%" ></el-input>
-            <el-button @click="btnJsLoad" type="primary" >加载pdf</el-button>
+            <el-button @click="btnJsLoad" type="primary" disabled="true">加载pdf</el-button>
             <!--          <el-button @click="btnUpload" type="primary" >加载pdf</el-button>-->
 <!--            <el-upload-->
 <!--                class="excel-btn"-->
@@ -24,9 +24,9 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col>
-        <el-button :loading="loading" @click="test" type="primary">LR段落分析</el-button>
-      </el-col>
+<!--      <el-col>-->
+<!--        <el-button :loading="loading" @click="test" type="primary">LR段落分析</el-button>-->
+<!--      </el-col>-->
     </el-row>
     <el-row>
       <el-col :span="12" class="pdf-container">
@@ -38,6 +38,7 @@
         </div>
       </el-col>
       <el-col :span="12">
+        <h2 style="margin: auto">文章导读</h2>
         <el-card style="margin-top:20px;" v-for="item in summary_lst">
           <template #header>
             <div><el-tag> 二级标题: </el-tag>{{item['metadata']['Header 2']}}</div>
@@ -45,7 +46,7 @@
 <!--              <span style="text-transform: lowercase;" >index:{{item.id}}</span>-->
 <!--            </div>-->
           </template>
-          <span style="font-size: 12px; " >{{item.src}}</span>
+<!--          <span style="font-size: 12px; " >{{item.src}}</span>-->
 <!--          <el-button :loading="loading" @click="btnSummary(item)" type="primary">总结</el-button>-->
 
           <div>
@@ -478,13 +479,7 @@ const debouncedLoadFile = debounce((pdf: any) => loadFile(pdf), 1000)
 const pdf_info= ref({})
 
 const summary_lst=[
-  {
-    "src": "LI Yang  \n(Institute of Computer & Communication Engineering, Changsha University of Science & Technology, Changsha 410076)  \n[Abstract] This paper introduces an intrusion detection model based on clustering analysis and realizes an algorithm of K-means which can set up a database of intrusion detection and classify safe levels. Experiential data are not required to set up this detection system, which is capable of re-classifying intrusion behaviors in terms of related data automatically. Simulation experiments show that the technique possesses strong applicability and self-adaptability.  \n[Key words) network security; intrusion detection; data mining; clustering analysis; K-means  \n随着网络的迅速发展和广泛使用,人们得益于网络的同 时,网上的数据也频繁地受到黑客的攻击和篡改,网络安全 变得越来越重要。目前常用的安全技术如信息加密、防火墙 等可以作为保护网络的第1 道防线,但仅有上述技术是不够 的,比如目前广泛使用的防火墙技术不能阻止内部攻击,不 能提供实时检测等,人们由此提出了网络安全的第2 道防线  \n\\-入侵检测技术。入侵检测用于识别非授权使用计算机系 —— 统的个体(如黑客)和虽有合法授权但滥用其权限的用户(如内 部攻击)。现有的入侵检测系统大都采用专家系统或基于统计 的方法,这需要较多的经验,而数据挖掘(data mining)方法的 优势在于它能从大量数据中提取人们感兴趣的、事先未知的 知识和规律,而不依赖经验[1]。本文运用数据挖掘中的聚类 分析方法,建立入侵检测模型数据库。它的优点是能高度自 动化地分析原有数据,作出归纳性推理,从中挖掘出潜在的 模式,预测出客户的行为,更重要的是它能够优化或完全抛 弃既有的模型,对入侵行为重新划分并用显示或隐式的方法 进行描述。仿真实验表明该方法具有较强的实用性和自适应 功能。本文的聚类分析方法是基于距离的K-平均值(K-means) 方法,利用此技术实现网络安全目前在国内外都是一种新的 尝试。",
-    "summary": "这篇论文介绍了一种基于聚类分析的入侵检测模型，并实现了一种可以建立入侵检测数据库和分类安全级别的K-means算法。这个检测系统不需要经验数据，能够自动根据相关数据重新分类入侵行为。仿真实验表明，这种技术具有强大的适用性和自适应性。随着网络的快速发展和广泛使用，网络安全问题变得越来越重要。目前常用的安全技术如信息加密、防火墙等是保护网络的第一道防线，但仅有这些技术是不够的，因此提出第二道防线--入侵检测技术。这种基于数据挖掘的入侵检测技术能从大量数据中提取出人们感兴趣的知识和规律，不依赖经验，实现高度自动化的分析和归纳性推理。",
-    "metadata": {
-      "Header 2": "Application of K-means Clustering Algorithm in Intrusion Detection"
-    }
-  },
+
   {
     "src": "入侵检测是对入侵行为的发觉。入侵检测系统将收集到 的信息加以分析,判断网络中是否有违反安全策略的行为和 遭到攻击的迹象,若找到入侵痕迹,认为与正常行为相符合 的行为是正常行为,与攻击行为相符合的是入侵行为,二者 都不符合的,则认为是异常数据,将其加入到数据仓库中作 进一步分析。  \n入侵检测系统的基本框架如图 1 所示[2]。  \n<figure>  \n![](figures/0)  \n<!-- FigureContent=\"引擎 格式数据 原始数据 格式数据 数据 自适应检测 仓库 模型产生 模型 检测器 模型\" -->  \n<figcaption>  \n图1\n入侵检测框架  \n</figcaption>  \n</figure>  \n图 1 中引擎观察原始数据并计算用于模型评估的特征; 检测器获取引擎的数据并利用检测模型评估它是否是一个攻 击;数据仓库被用作数据和模型的中心存储地;自适应检测 模型实时产生,送至检测器实时检测入侵行为。在整个检测 系统中,自适应检测模型的产生无疑对入侵行为的辨识起着 决定作用。如何快速准确地产生检测模型库显得至关重要。",
     "summary": "入侵检测是一个系统的过程，包括收集和分析信息，以便判断网络中是否存在违反安全策略的行为或攻击迹象。如果发现入侵痕迹，检测系统会判断其与正常行为或攻击行为的符合度，如果两者都不符合，便将其视为异常数据并加入数据仓库以供进一步分析。入侵检测系统的基本框架包括引擎观察原始数据并计算用于模型评估的特征，检测器获取引擎的数据并利用模型评估它是否为攻击，数据仓库是数据和模型的中心存储地，而自适应检测模型则实时生成并送至检测器实时检测入侵行为。整个系统中，自适应检测模型的产生对入侵行为的辨识起着决定作用，因此，如何快速准确地产生检测模型库显得至关重要。",

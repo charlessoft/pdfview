@@ -1,12 +1,16 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import Main from './components/main.vue'
+// import HelloWorld from './components/HelloWorld.vue'
+// import Main from './components/main.vue'
 
 </script>
 
 <template>
 
   <div >
+    <RouterLink to="/">文章导读(LR)</RouterLink>
+    <RouterLink to="/mlayout_markdown" style="margin-left: 20px;">文章导读(微软)</RouterLink>
+    <RouterLink to="/marker_markdown" style="margin-left: 20px;">文章导读(marker)</RouterLink>
+    <hr />
     <router-view />
 <!--    <Main v-if="loading==true" :pdf="jsPdf" style="margin-top:0px;width: 100%;height:100%;"></Main>-->
   </div>

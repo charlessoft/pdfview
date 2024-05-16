@@ -16,7 +16,7 @@
                 :on-success="getPdfurl"
                 :show-file-list="false"
             >
-              <el-button size="small" type="primary" icon="upload">导入</el-button>
+<!--              <el-button size="small" type="primary" icon="upload">导入</el-button>-->
             </el-upload>
           </el-form-item>
 
@@ -35,6 +35,7 @@
         </div>
       </el-col>
       <el-col :span="12">
+        <h2 style="margin: auto">文章导读</h2>
         <el-card style="margin-top:20px;" v-for="item in final_summary">
           <template #header>
             <div class="card-header">

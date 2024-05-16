@@ -8,7 +8,7 @@
         <el-form>
           <el-form-item label="输入pdf地址:">
             <el-input v-model="jsPdf" style="width: 80%" ></el-input>
-            <el-button @click="btnJsLoad" type="primary" >加载pdf</el-button>
+            <el-button @click="btnJsLoad" type="primary" disabled="true" >加载pdf</el-button>
             <!--          <el-button @click="btnUpload" type="primary" >加载pdf</el-button>-->
 <!--            <el-upload-->
 <!--                class="excel-btn"-->
@@ -24,9 +24,9 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col>
-        <el-button :loading="loading" @click="test" type="primary">LR段落分析</el-button>
-      </el-col>
+<!--      <el-col>-->
+<!--        <el-button :loading="loading" @click="test" type="primary">LR段落分析</el-button>-->
+<!--      </el-col>-->
     </el-row>
     <el-row>
       <el-col :span="12" class="pdf-container">
@@ -38,6 +38,7 @@
         </div>
       </el-col>
       <el-col :span="12">
+        <h2 style="margin: auto">文章导读</h2>
         <el-card style="margin-top:20px;" v-for="item in summary_lst">
           <template #header>
             <div><el-tag> 二级标题: </el-tag>{{item['metadata']['Header 2']}}</div>
@@ -45,7 +46,7 @@
 <!--              <span style="text-transform: lowercase;" >index:{{item.id}}</span>-->
 <!--            </div>-->
           </template>
-          <span style="font-size: 12px; " >{{item.src}}</span>
+<!--          <span style="font-size: 12px; " >{{item.src}}</span>-->
 <!--          <el-button :loading="loading" @click="btnSummary(item)" type="primary">总结</el-button>-->
 
           <div>
